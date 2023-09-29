@@ -39,5 +39,6 @@ def post_list(request):
 @api_view(['GET'])
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(Post, slug=post, status='published',publish_year=year,publish_month=month,publish_day=day)
+    # comments = post.comments.all()
     serializer = PostSerializer(post,many=False)
     return Response(serializer.data)
