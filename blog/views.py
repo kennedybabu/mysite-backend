@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view 
 from .serializers import PostSerializer, UserSerializer 
 from django.contrib.auth.models import User
-
+from rest_framework.permissions import IsAuthenticated
+import json
 # Create your views here.
 
 
@@ -42,3 +43,20 @@ def post_detail(request, year, month, day, post):
     # comments = post.comments.all()
     serializer = PostSerializer(post,many=False)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def create_post(request):
+    # post = json.loads(request.body)
+    # serializer = PostSerializer(post, many=False)
+    # return Response(serializer.data)
+    try:
+        data = json.loads(request.body)
+        serializer = PostSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        else:
+            return Response(serializer.errors, status=400)
+    except json.JSONDecodeError:
+        return Response({"error":"Invalid JSON data"}, status=400)

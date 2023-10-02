@@ -12,10 +12,10 @@ class CommentSerializer(ModelSerializer):
 
 
 class PostSerializer(ModelSerializer):
-    comments = CommentSerializer(many=True)
+    comments = CommentSerializer(many=True, required=False)
     class Meta:
         model = Post
-        fields = ('title', 'slug', 'author', 'body', 'publish', 'created', 'updated', 'status','objects', 'published','comments',)
+        fields = ('author', 'body', 'publish', 'created', 'updated','objects', 'published','comments',)
 
 class UserSerializer(ModelSerializer):
     class Meta:
