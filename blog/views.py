@@ -6,6 +6,7 @@ from .serializers import PostSerializer, UserSerializer,CommentSerializer
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 import json
+from rest_framework.authtoken.models import Token
 # Create your views here.
 
 
@@ -70,4 +71,49 @@ def create_comment(request):
             return Response(serializer.data, status=400)
     except json.JSONDecodeError:
         return Response({"error": "Invalid JSON data"}, status=400)
-        
+    
+
+@api_view(['POST'])
+def signup(request):
+    try:
+        data = request.data
+        serializer = UserSerializer(data = data)
+        if serializer.is_valid():
+            user = serializer.save()
+            if user:
+                token = Token.objects.create(user=user)
+                json_data = serializer.data 
+                json_data['token'] = token.key
+                return Response(json_data, status=201)
+            return Response(serializer.data, status=201)
+        else:
+            return Response(serializer.errors, status=400)
+    except json.JSONDecodeError:
+        return Response({"error": "Invalid JSON data"}, status=400)
+    
+
+
+# @api_view(['POST'])
+# def signup(self, request, format='json'):
+#     serializer = UserSerializer(data=request.data)
+#     if serializer.is_valid():
+#         user = serializer.save()
+#         if user:
+#             token = Token.objects.create(user=user)
+#             json = serializer.data 
+#             json['token'] = token.key
+#             return Response(json, status=201)
+#     return Response(serializer.errors, status=400)
+
+# class UserCreate(APIView):
+#     def signup(self, request, format='json'):
+#         serializer = UserSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = serializer.save()
+#             if user:
+#                 token = Token.objects.create(user=user)
+#                 json = serializer.data 
+#                 json['token'] = token.key
+#                 return Response(json, status=201)
+#         return Response(serializer.errors, status=400)
+ 
