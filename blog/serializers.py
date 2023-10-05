@@ -15,9 +15,10 @@ class CommentSerializer(ModelSerializer):
 
 class PostSerializer(ModelSerializer):
     comments = CommentSerializer(many=True, required=False)
+    author_username = serializers.ReadOnlyField(source='author.username')
     class Meta:
         model = Post
-        fields = ('id','author', 'body', 'publish', 'created', 'updated','objects', 'published','comments',)
+        fields = ('id','author', 'author_username', 'body', 'publish', 'created', 'updated','objects', 'published','comments',)
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=User.objects.all())])
